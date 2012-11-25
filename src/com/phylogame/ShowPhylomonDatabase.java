@@ -1,6 +1,10 @@
 package com.phylogame;
 
 
+
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ListIterator;
 
 
@@ -9,85 +13,71 @@ import com.phylogame.R;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.provider.SyncStateContract.Constants;
+import android.util.Log;
 import android.view.View;
 import android.view.View.*;
 import android.widget.*;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.view.ViewGroup;
 import android.view.LayoutInflater;
 import android.database.Cursor;
 import android.database.CursorJoiner;
 import android.widget.ArrayAdapter;
 import java.util.*; 
+import android.widget.AdapterView.OnItemClickListener;
 
 
 
 
 
-public class ShowPhylomonDatabase extends Activity {
-	DBM database;
-	ListIterator<Phylomon> itt;
+
+public class ShowPhylomonDatabase extends Activity implements OnClickListener, OnItemClickListener {
+	ListView listView;
+	Button back;
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.database);
+        MyApplication myapp = ((MyApplication)getApplicationContext());
         
-        database = new DBM();
-        itt = database.getPhylomonIterator();
         
-        ListView listView = (ListView) findViewById(R.id.phylomonlist);
-        String[] values = new String[] { "Android", "iPhone", "WindowsMobile",
-          "Blackberry", "WebOS", "Ubuntu", "Windows7", "Max OS X",
-          "Linux", "OS/2" };
+        
+        listView = (ListView) findViewById(R.id.phylomonlist);
+        back = (Button) findViewById(R.id.back);
 
-        // First paramenter - Context
-        // Second parameter - Layout for the row
-        // Third parameter - ID of the TextView to which the data is written
-        // Forth - the Array of data
-        MyAdapter adapter = new MyAdapter(this, database.getArray());
-        MySimpleArrayAdapter adapter2 = new MySimpleArrayAdapter(this, values);
+        //make an adapter for the ListView
+        MyAdapter adapter = new MyAdapter(this, myapp.getDatabase());
+
 
         // Assign adapter to ListView
-        listView.setAdapter(adapter); 
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(this);
+        // assign listener to button
+        back.setOnClickListener(this);
+	}
+	
+	@Override
+	public void onClick(View v) {
+		this.onBackPressed();
+		
 	}
 	
 
-public class MySimpleArrayAdapter extends ArrayAdapter<String> {
-  private final Context context;
-  private final String[] values;
-
-  public MySimpleArrayAdapter(Context context, String[] values) {
-    super(context, R.layout.rowlayout, values);
-    this.context = context;
-    this.values = values;
-  }
-
-  @Override
-  public View getView(int position, View convertView, ViewGroup parent) {
-    LayoutInflater inflater = (LayoutInflater) context
-        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-    View rowView = inflater.inflate(R.layout.rowlayout, parent, false);
-    TextView textView = (TextView) rowView.findViewById(R.id.name);
-
-    textView.setText(values[position]);
-
-
-    return rowView;
-  }
-} 
-	
-	public class MyAdapter extends ArrayAdapter<Phylomon>{
-		private  ArrayList<Phylomon> phylomons;
+	//this is the adapter that will govern what the viewlist will display
+	private class MyAdapter extends ArrayAdapter<Phylomon>{
+		private  Phylomon[] phylomons;
 		private final Context context;
 		
-		public MyAdapter(Context context, ArrayList<Phylomon> array) {
+		public MyAdapter(Context context, Phylomon[] array) {
 			super(context, R.layout.rowlayout, array);
 			this.phylomons = array;
 			this.context =context;
-			phylomons.add(new Phylomon("stijn",5,"rage",10,null));
 		}
+
 		
 		@Override
 		public View getView (int position, View convertView, ViewGroup parent){
@@ -95,27 +85,30 @@ public class MySimpleArrayAdapter extends ArrayAdapter<String> {
 			View rowView = inflater.inflate(R.layout.rowlayout, parent, false);
 
 			TextView text = (TextView)rowView.findViewById(R.id.name);
-			text.setText("stijn");
-			ImageView img;
-			img.setImageResource(getResources().getIdentifier("com.phylogame:drawable/"+"humpback_whale.jpg",null,null));
-			
+			text.setText(phylomons[position].getName());
 			
 			return rowView;
-		}
+		}		
+	}
+	
+
+	@Override
+	public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
 		
-		
-		
-		
-		
+		Intent intent = new Intent(this ,ShowPhylomon.class);
+		intent.putExtra("position",Integer.toString(position) );
+		this.startActivity(intent);
 		
 	}
+	
 }
 
 
 
 
 
-
+//ImageView img;
+//img.setImageResource(getResources().getIdentifier("com.phylogame:drawable/"+"humpback_whale.jpg",null,null));
 
 
 

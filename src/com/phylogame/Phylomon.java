@@ -1,4 +1,5 @@
 package com.phylogame;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -25,11 +26,11 @@ public class Phylomon {
 	
 	//de constructor die de DBM gebruikt om van xml phylomon te maken
 	Phylomon(Element element){
-		this.name1 = DBM.getValue("Name", element);
-		this.HP1 = Integer.valueOf(DBM.getValue("HP", element));
-		this.attackName1 = DBM.getValue("attackName", element);
-		this.attackDamage1 = Integer.valueOf(DBM.getValue("attackDamage", element));	
-		this.picLocatie1 = DBM.getValue("picLocatie", element);
+		this.name1 = XmlParser.getValue("Name", element);
+		this.HP1 = Integer.valueOf(XmlParser.getValue("HP", element));
+		this.attackName1 = XmlParser.getValue("attackName", element);
+		this.attackDamage1 = Integer.valueOf(XmlParser.getValue("attackDamage", element));	
+		this.picLocatie1 = XmlParser.getValue("picLocatie", element);
 		
 		
 

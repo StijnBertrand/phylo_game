@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<resources>
+	<phylomon>
+		<Name>humpback whale</Name>
+		<HP>100</HP>
+		<attackName>watergun</attackName>
+		<attackDamage>30</attackDamage>
+		<picLocatie>humpback_whale</picLocatie>
+</phylomon>
+<phylomon>
+<Name>stijn </Name>
+<HP>50</HP>
+<attackName>zufg</attackName>
+<attackDamage>20</attackDamage>
+<picLocatie>noimage</picLocatie>
+</phylomon>
+<phylomon>
+<Name>dries</Name>
+<HP>50</HP>
+<attackName>lol rage</attackName>
+<attackDamage>30</attackDamage>
+<picLocatie>noimage</picLocatie>
+</phylomon>
+<phylomon>
+<Name>sry</Name>
+<HP>75</HP>
+<attackName>hy</attackName>
+<attackDamage>79</attackDamage>
+<picLocatie>noimage</picLocatie>
+</phylomon>
+</resources>

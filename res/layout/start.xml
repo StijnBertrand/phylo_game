@@ -12,18 +12,13 @@
         android:layout_marginTop="62dp"
         android:text="phylomon database" />
 
-    <EditText
-        android:id="@+id/editText1"
+    <Button
+        android:id="@+id/battle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
+        android:layout_alignLeft="@+id/phyloDatabase"
+        android:layout_alignRight="@+id/phyloDatabase"
         android:layout_below="@+id/phyloDatabase"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="126dp"
-        android:ems="10" >
-
-        <requestFocus />
-    </EditText>
+        android:text="@string/Battle" />
 
 </RelativeLayout>

@@ -3,7 +3,7 @@ package com.phylogame;
 
 import android.graphics.Color;
 import android.os.Bundle;
-
+import android.util.Log;
 
 
 import java.util.*; 
@@ -18,23 +18,33 @@ import android.content.Intent;
 
  
 public class MainActivity extends Activity implements OnClickListener{
-    /** Called when the activity is first created. */
+    Button pDBut,battleBut;
+	
+	
+	/** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.start);
         
-        Button pDBut = (Button) this.findViewById(R.id.phyloDatabase);
+        pDBut = (Button) this.findViewById(R.id.phyloDatabase);
         pDBut.setOnClickListener(this);
-        
-
+        battleBut =(Button)findViewById(R.id.battle);
+        battleBut.setOnClickListener(this);
+      
     }
 
 	@Override
 	public void onClick(View v) {
-		Intent pDIntent = new Intent(this,ShowPhylomonDatabase.class);
+		Intent Intent; 
+		if(v.getId() == R.id.phyloDatabase){
+			Intent = new Intent(this,ShowPhylomonDatabase.class);
+			this.startActivity(Intent);
+		}else if(v.getId() == R.id.battle){
+			Intent = new Intent(this,Battle.class);
+			this.startActivity(Intent);
+		}
 		
-		this.startActivity(pDIntent);
 		
 	}
 
