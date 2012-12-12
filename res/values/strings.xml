@@ -7,5 +7,7 @@
     <string name="Back">Back</string>
     <string name="phylomon">Phylomon</string>
     <string name="Battle">Battle</string>
+    <string name="Attack">Attack</string>
+    <string name="battleStart">prepare for battle, it is your turn.</string>
 
 </resources>

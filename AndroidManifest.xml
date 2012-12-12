@@ -8,13 +8,13 @@
         android:targetSdkVersion="15" />
 
     <application
-        android:name=".MyApplication"
+        android:name="com.phyloActivities.PhyloApplication"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         
         <activity
-            android:name="com.phylogame.MainActivity"
+            android:name="com.phyloActivities.MainActivity"
             android:label="@string/title_activity_main" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,19 +24,19 @@
         </activity>
         
         <activity
-            android:name="com.phylogame.ShowPhylomonDatabase"
+            android:name="com.phyloActivities.ShowPhylomonDatabase"
             android:label="@string/phylomondatabase" >
             
         </activity>
         
         <activity
-            android:name="com.phylogame.ShowPhylomon"
+            android:name="com.phyloActivities.ShowPhylomon"
             android:label="@string/phylomon" >
             
         </activity>
         
         <activity
-            android:name="com.phylogame.Battle"
+            android:name="com.phyloActivities.BattleActivity"
             android:label="@string/Battle" >
             
         </activity>
