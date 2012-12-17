@@ -22,7 +22,7 @@ public class BattleActivity extends Activity implements OnClickListener{
 	Battle battle;
 	
 	Button attack;
-	TextView message;
+	TextView message,hph,hpv;
 	AlertDialog.Builder dialog;
 		
 	@Override
@@ -33,6 +33,8 @@ public class BattleActivity extends Activity implements OnClickListener{
 		
 		message = (TextView) findViewById(R.id.message);
 		attack = (Button) findViewById(R.id.attackBut);
+		hph = (TextView) findViewById(R.id.hphome);
+		hpv = (TextView) findViewById(R.id.hpvisitor);
 		attack.setOnClickListener(this);
 		dialog = new AlertDialog.Builder(this);
 		
@@ -65,7 +67,9 @@ public class BattleActivity extends Activity implements OnClickListener{
 	public void draw(){
 		
 		message.setText(battle.getMessage());
-		
+		hph.setText(battle.getHome().getHP() + "/" + battle.getHome().getMaxHp());
+		hpv.setText(battle.getVisitor().getHP() + "/" + battle.getVisitor().getMaxHp());
+
 		
 		
 		
