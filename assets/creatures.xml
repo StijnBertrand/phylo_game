@@ -3,29 +3,25 @@
 	<phylomon>
 		<Name>humpback whale</Name>
 		<HP>100</HP>
-		<attackName>watergun</attackName>
-		<attackDamage>30</attackDamage>
+		<attackId>0</attackId>
 		<picLocatie>humpback_whale</picLocatie>
 </phylomon>
 <phylomon>
 <Name>stijn </Name>
 <HP>50</HP>
-<attackName>zufg</attackName>
-<attackDamage>20</attackDamage>
+<attackId>1</attackId>
 <picLocatie>noimage</picLocatie>
 </phylomon>
 <phylomon>
 <Name>dries</Name>
 <HP>50</HP>
-<attackName>lol rage</attackName>
-<attackDamage>30</attackDamage>
+<attackId>2</attackId>
 <picLocatie>noimage</picLocatie>
 </phylomon>
 <phylomon>
 <Name>sry</Name>
 <HP>75</HP>
-<attackName>hy</attackName>
-<attackDamage>79</attackDamage>
+<attackId>0</attackId>
 <picLocatie>noimage</picLocatie>
 </phylomon>
 </resources>

@@ -1,6 +1,7 @@
 package com.phyloActivities;
  
 
+import PhyloKlasse.Phylomon;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,7 +19,8 @@ import android.content.Intent;
 
  
 public class MainActivity extends Activity implements OnClickListener{
-    Button pDBut,battleBut;
+    Button pDBut,battleBut,myPhyloBut;
+    PhyloApplication app;
 	
 	
 	/** Called when the activity is first created. */
@@ -26,23 +28,47 @@ public class MainActivity extends Activity implements OnClickListener{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.start);
+        app = ((PhyloApplication)getApplicationContext());
         
         pDBut = (Button) this.findViewById(R.id.phyloDatabase);
         pDBut.setOnClickListener(this);
         battleBut =(Button)findViewById(R.id.battle);
         battleBut.setOnClickListener(this);
+        myPhyloBut = (Button)findViewById(R.id.My_Phylomon);
+        myPhyloBut.setOnClickListener(this);
       
     }
 
 	@Override
 	public void onClick(View v) {
-		Intent Intent; 
+		Intent intent; 
 		if(v.getId() == R.id.phyloDatabase){
-			Intent = new Intent(this,ShowPhylomonDatabase.class);
-			this.startActivity(Intent);
+			intent = new Intent(this,ShowPhylomonDatabase.class);
+			this.startActivity(intent);
 		}else if(v.getId() == R.id.battle){
-			Intent = new Intent(this,BattleActivity.class);
-			this.startActivity(Intent);
+			//to start a battle there has to be at least one phylomon that is not dead
+			int i = 0;
+			for(Phylomon curr : app.getMyPhylomon()){
+				if(curr == null){
+					i = app.getMaxPhylomon();
+					break;
+				}
+				if(curr.dead())	i++;
+				else break;
+			}
+			//if we found one we start the battle else we notify the user
+			if(i == app.getMaxPhylomon()){
+				//alert dialog 
+			}else{
+				intent = new Intent(this,BattleActivity.class);
+				//pass on the first not dead phylomon
+				intent.putExtra("myfirst", (int)i);
+				this.startActivity(intent);
+			}
+	
+		}else if (v.getId() == R.id.My_Phylomon){
+			intent = new Intent(this,MyPhylomon.class);
+			this.startActivity(intent);
 		}
 		
 		

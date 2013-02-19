@@ -1,40 +1,69 @@
 package PhyloKlasse;
 
 public class Battle {
-	private Phylomon home;
-	private Phylomon visitor;
-	private boolean aanHome;
-	private String message = "@string/battleStart";
+	private Phylomon[] homeTeam;
+	private Phylomon[] visitorTeam;
+	private int home;
+	private int visitor;
+	private Attack[] attacks;
 	
-	public Battle(Phylomon home,Phylomon visitor){
-		this.home=home;
-		this.visitor=visitor;	
+	private boolean aanHome;
+	
+	public Battle(Phylomon[] homeTeam,int homefirst,Phylomon[] visitorTeam,int visitorfirst,Attack[] attacks){
+		this.homeTeam = homeTeam;
+		this.visitorTeam = visitorTeam;
+		this.home = homefirst;
+		this.visitor = visitorfirst;
+		this.attacks = attacks;
+		aanHome = true;
 	}
 	
-	public void attack(){
+	public int attack(){
+		Attack attack;
+		int damage;
 		if (aanHome){
-			home.doAttack(visitor);
-			message = home.getPicLocatie() + " does " + home.getAttack().getName() + "and it did " + Integer.toString(home.getAttack().getDamage());
+			attack = attacks[homeTeam[home].getAttackId()];
+			damage = attack.execute(homeTeam[home],visitorTeam[visitor]);
 		}else{
-			visitor.doAttack(home);
-			message = visitor.getPicLocatie() + " does " + visitor.getAttack().getName() + "and it did " + Integer.toString(visitor.getAttack().getDamage());
+			attack = attacks[visitorTeam[visitor].getAttackId()];
+			damage = attack.execute(visitorTeam[visitor],homeTeam[home]);
 		}
 		aanHome = !aanHome;
+		return damage;
 	}
 	
-	
-	public String getMessage(){
-		return message;
-	}
 	
 	public Phylomon getHome(){
-		return home;
+		return homeTeam[home];
 	}
 	public Phylomon getVisitor(){
-		return visitor;
+		return visitorTeam[visitor];
 	}
 	
+	// 1 Everything was OK
+	// 2 the chosen one was already dead
+	public int change(int next){
+		Phylomon[] team;
+		if(aanHome){
+			team = homeTeam;
+		}else{
+			team = visitorTeam;
+		}
+		aanHome = !aanHome;
+		if (team[next].dead()){
+			return 2;
+		}else{
+			this.home = next;
+			return 1;
+		}
+		
+	}
 	
-	
-
+	public boolean dead(){
+		if(aanHome){
+			return homeTeam[home].dead();
+		}else{
+			return visitorTeam[visitor].dead();
+		}
+	}
 }

@@ -9,5 +9,8 @@
     <string name="Battle">Battle</string>
     <string name="Attack">Attack</string>
     <string name="battleStart">prepare for battle, it is your turn.</string>
+    <string name="My_Phylomon">My Phylomon</string>
+    <string name="Bag">BAg</string>
+    <string name="Run_Away">Run Away</string>
 
 </resources>

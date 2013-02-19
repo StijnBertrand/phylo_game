@@ -31,10 +31,6 @@ import java.util.*;
 import android.widget.AdapterView.OnItemClickListener;
 
 
-
-
-
-
 public class ShowPhylomonDatabase extends Activity implements OnClickListener, OnItemClickListener {
 	PhyloApplication app;
 	ListView listView;
@@ -48,7 +44,7 @@ public class ShowPhylomonDatabase extends Activity implements OnClickListener, O
         
         
         
-        listView = (ListView) findViewById(R.id.phylomonlist);
+        listView = (ListView) findViewById(R.id.typeslist);
         back = (Button) findViewById(R.id.back);
 
         //make an adapter for the ListView
@@ -71,12 +67,12 @@ public class ShowPhylomonDatabase extends Activity implements OnClickListener, O
 
 	//this is the adapter that will govern what the viewlist will display
 	private class MyAdapter extends ArrayAdapter<PhylomonType>{
-		private  PhylomonType[] phylomons;
+		private  PhylomonType[] types;
 		private final Context context;
 		
 		public MyAdapter(Context context, PhylomonType[] array) {
 			super(context, R.layout.rowlayout, array);
-			this.phylomons = array;
+			this.types = array;
 			this.context =context;
 		}
 
@@ -87,7 +83,7 @@ public class ShowPhylomonDatabase extends Activity implements OnClickListener, O
 			View rowView = inflater.inflate(R.layout.rowlayout, parent, false);
 
 			TextView text = (TextView)rowView.findViewById(R.id.name);
-			text.setText(phylomons[position].getName());
+			text.setText(types[position].getName());
 			
 			return rowView;
 		}		

@@ -3,14 +3,20 @@ package PhyloKlasse;
 public class Phylomon {
 	PhylomonType type;
 	int hp;
-	Attack attack;
+	int level;
+
 	
-	public Phylomon(PhylomonType type){
+	public Phylomon(PhylomonType type,int level){
 		this.type = type;
 		this.hp = type.getMaxHp();
-		this.attack= type.getAttack();
+		if(level>5 && level<150){
+			this.level = level;
+		}else{
+			this.level = 5;
+		}
 	}
 
+	
 	
 	public void addHP(int hp){
 		int newhp = this.hp + hp;
@@ -29,12 +35,12 @@ public class Phylomon {
 		this.hp = type.getMaxHp();
 	}
 	
-	public void doAttack(Phylomon victem){
-		victem.addHP(-this.getAttack().getDamage());
-	}
-	
 	public boolean dead(){
 		return this.hp == 0;
+	}
+	
+	public void incLevel(){
+		this.level += 1;
 	}
 	
 	//geters
@@ -42,10 +48,10 @@ public class Phylomon {
 		return hp;
 	}
 	
-	public Attack  getAttack(){
-		return attack;
+	public int getLevel(){
+		return level;
 	}
-	
+
 	//getters from the type
 	public String getName(){
 		return type.getName();
@@ -57,5 +63,9 @@ public class Phylomon {
 
 	public String getPicLocatie(){
 		return type.getPicLocatie();
+	}
+
+	public int getAttackId() {	
+		return type.getAttackId();
 	}
 }

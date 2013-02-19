@@ -16,7 +16,7 @@ import android.content.res.AssetManager;
 public  class XmlParser {
 	private static String path = "/creatures.xml";
 	
-	public static PhylomonType[] parse(InputStream xml){
+	public static PhylomonType[] parsePhylomon(InputStream xml){
 		PhylomonType[] database;
 		try 
 		{	
@@ -45,10 +45,44 @@ public  class XmlParser {
 		return database;
 	}
 	
+	public static Attack[] parseAttacks(InputStream attackStream) {
+		Attack[] attacks;
+		
+		try 
+		{	
+			
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse(attackStream);
+			
+			doc.getDocumentElement().normalize();
+			
+			NodeList nodes = doc.getElementsByTagName("attack");
+			attacks = new Attack[nodes.getLength()]; 
+			//nu enkel nog de Array van phylomon initialiseren
+			for (int i = 0; i < nodes.getLength(); i++) {
+				Node node = nodes.item(i);
+				if (node.getNodeType() == Node.ELEMENT_NODE) {
+					Element element = (Element) node;
+					Attack current = new Attack(element);
+					attacks[i] = current;
+				}
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			attacks = new Attack[0];
+		}
+		return attacks;
+	}
+	
+	
+	
 	public static String getValue(String tag, Element element) {
 		NodeList nodes = element.getElementsByTagName(tag).item(0).getChildNodes();
 		Node node = (Node) nodes.item(0);
 		return node.getNodeValue();
 	}
+
+	
 }	
 

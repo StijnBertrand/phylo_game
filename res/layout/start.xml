@@ -21,4 +21,13 @@
         android:layout_below="@+id/phyloDatabase"
         android:text="@string/Battle" />
 
+    <Button
+        android:id="@+id/My_Phylomon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/battle"
+        android:layout_alignRight="@+id/battle"
+        android:layout_below="@+id/battle"
+        android:text="@string/My_Phylomon" />
+
 </RelativeLayout>
