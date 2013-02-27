@@ -12,14 +12,17 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
 
-public class BattleActivity extends Activity{
+public class BattleActivity extends Activity implements OnTouchListener{
 	PhyloApplication app;	
 	Battle battle;
 	
@@ -27,9 +30,9 @@ public class BattleActivity extends Activity{
 	TextView message,hph,hpv;
 	TableLayout menu;
 	
-	String stringmessage;
-	
 	int activityResult;
+	// variable used in the on touch listener
+	boolean touch = false;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -38,6 +41,8 @@ public class BattleActivity extends Activity{
 		app = ((PhyloApplication)getApplicationContext());
 		
 		message = (TextView) findViewById(R.id.message);
+		message.setOnTouchListener(this);
+				
 		hph = (TextView) findViewById(R.id.hphome);
 		hpv = (TextView) findViewById(R.id.hpvisitor);
 		
@@ -49,20 +54,94 @@ public class BattleActivity extends Activity{
 		menu = (TableLayout) findViewById(R.id.menu);
 		initializeMenu();
 		
-		draw();
-		showMenu();
+		draw();		
+		next();		
 	}	
+	
+	
+
+	public boolean onTouch(View v, MotionEvent event) {
+		if(touch){
+			touch = false;
+			next();
+		}
+		return false;
+	}
+	
+	
+	
+	private void next(){
+		int n = battle.next();
+
+		switch (n){
+		case 0 : {
+			showMenu();
+			break;
+		}
+		case 1 : {
+			LetVisitorPlay();
+			break;
+		}
+		case 2 : {
+			getNextPhylomon();
+			break;
+		}
+		case 3 : {
+			break;
+		}
+		case 4 :{
+			endBattle();
+			break;
+		}
+		case 5 :{
+			message.setText(battle.getInfo() + " did " + battle.getInfo() + " and it dit " + battle.getInfo() + " damage");
+			touch = true;
+			break;
+		}
+		case 6 :{
+			message.setText(battle.getInfo() + " I choose you!!!");
+			touch = true;
+			break;
+		}
+		case 7 :{
+			message.setText("The opponent has chosen " + battle.getInfo());
+			touch = true;
+			break;
+		}
+		case 8 :{
+			message.setText(battle.getInfo() + " has fainted.");
+			touch = true;
+			break;
+		}
+		case 9 :{
+			message.setText(battle.getInfo() + " has gained " + battle.getInfo() + "experience ");
+			touch = true;
+			break;
+		}
+		
+		
+		
+		
+		
+		
+		}
+	}
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	private void LetVisitorPlay(){
 		battle.attack();
 		draw();
-		if(battle.getHome().dead()){
-			message.setText("the battle is over, you have lost");
-			//app.save();
-			//zelfde reden als hierboven
-			draw();
-			endBattle();
-		}
+		next();
 	}
 	
 	
@@ -78,24 +157,20 @@ public class BattleActivity extends Activity{
 		new OnClickListener(){
 			@Override
 			public void onClick(View v) {
-				stringmessage = "ge hebt aangevallen";
+				hideMenu();
 				battle.attack();
 				draw();
-				if(battle.dead()){
-					stringmessage = "the battle is over,you have won";
-					draw();
-					endBattle();
-				}else{
-					LetVisitorPlay();
-					showMenu();
+				next();
 				}
 			}
-		});
+		);
 		
+		//this puts a listener on the Phylomon button
 		change.setOnClickListener(
 		new OnClickListener(){
 			@Override
 			public void onClick(View v) {
+				hideMenu();
 				getNextPhylomon();	
 			}
 		});
@@ -103,16 +178,17 @@ public class BattleActivity extends Activity{
 		
 		
 	}
+
 	
-	
-	
-	
+	//this procedure calls the activity to let the player choose the next Phylomon	
 	private void getNextPhylomon(){
 		Intent i = new Intent(this,MyPhylomon.class);  
 		i.putExtra("activityId", 1);
 		startActivityForResult(i, 0);
 	}
 	
+	//this procedure gets Phylomon the players chose 
+	//and calls the Battle.choose() method.
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 	    super.onActivityResult(requestCode, resultCode, data);
@@ -122,8 +198,7 @@ public class BattleActivity extends Activity{
 	    		if(next!= -1){
 	    			battle.change(next);
 	    			draw();
-					LetVisitorPlay();
-					showMenu();
+	    			next();
 	    		}
 	    	}
 	    }
@@ -131,23 +206,20 @@ public class BattleActivity extends Activity{
 	
 	
 	
-	
-	
-	
+
 	private void draw(){	
-		
-		message.setText(stringmessage);
 		hph.setText(battle.getHome().getHP() + "/" + battle.getHome().getMaxHp());
 		hpv.setText(battle.getVisitor().getHP() + "/" + battle.getVisitor().getMaxHp());
 	}
 	private void showMenu(){
-		menu.setVisibility(0);
+		menu.setVisibility(TableLayout.VISIBLE);
 	}
 	private void hideMenu(){
-		menu.setVisibility(2);
+		menu.setVisibility(TableLayout.GONE);
 	}
 	private void endBattle(){
-		this.onBackPressed();
+		//app.save();
+		finish();
 	}
 	
 	

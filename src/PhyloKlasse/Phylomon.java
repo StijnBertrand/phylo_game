@@ -4,16 +4,20 @@ public class Phylomon {
 	PhylomonType type;
 	int hp;
 	int level;
+	int Xp;
+	int XpForNext;
 
 	
 	public Phylomon(PhylomonType type,int level){
 		this.type = type;
 		this.hp = type.getMaxHp();
-		if(level>5 && level<150){
-			this.level = level;
+		if(level>5 && level<100){
+			this.level = level;	
 		}else{
 			this.level = 5;
 		}
+		Xp = Experience.getXpForLevel(type.getXpClass(), level);
+		XpForNext =  Experience.getXpForLevel(type.getXpClass(), level + 1);
 	}
 
 	
@@ -39,7 +43,17 @@ public class Phylomon {
 		return this.hp == 0;
 	}
 	
-	public void incLevel(){
+	//returns true if the Phylomon has to advance a level
+	public boolean addXp(int amount){
+		if(level != 100){
+			Xp += amount;
+			return Xp > XpForNext;
+		}else{
+			return false;
+		}
+		
+	}
+ 	public void incLevel(){
 		this.level += 1;
 	}
 	
@@ -67,5 +81,9 @@ public class Phylomon {
 
 	public int getAttackId() {	
 		return type.getAttackId();
+	}
+	
+	public int getBaseXp(){
+		return type.getBaseXp();
 	}
 }

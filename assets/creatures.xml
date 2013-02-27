@@ -3,24 +3,32 @@
 	<phylomon>
 		<Name>humpback whale</Name>
 		<HP>100</HP>
+		<experienceGroup>0</experienceGroup>
+		<baseXp>100</baseXp>
 		<attackId>0</attackId>
 		<picLocatie>humpback_whale</picLocatie>
 </phylomon>
 <phylomon>
 <Name>stijn </Name>
 <HP>50</HP>
+<experienceGroup>0</experienceGroup>
+<baseXp>100</baseXp>
 <attackId>1</attackId>
 <picLocatie>noimage</picLocatie>
 </phylomon>
 <phylomon>
 <Name>dries</Name>
 <HP>50</HP>
+<experienceGroup>0</experienceGroup>
+<baseXp>100</baseXp>
 <attackId>2</attackId>
 <picLocatie>noimage</picLocatie>
 </phylomon>
 <phylomon>
 <Name>sry</Name>
 <HP>75</HP>
+<experienceGroup>0</experienceGroup>
+<baseXp>100</baseXp>
 <attackId>0</attackId>
 <picLocatie>noimage</picLocatie>
 </phylomon>
