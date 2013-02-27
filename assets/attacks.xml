@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<resources>
+    <attack id="0">
+        <name> watergun </name>
+        <damage>30</damage>  
+    </attack>
+    
+    <attack id="1">
+        <name> zagen </name>
+        <damage>10000</damage>  
+    </attack>
+    
+    <attack id="2">
+        <name> lol rage </name>
+        <damage>40</damage>  
+    </attack> 
+</resources>
