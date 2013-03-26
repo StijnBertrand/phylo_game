@@ -17,6 +17,7 @@ public  class XmlParser {
 	private static String path = "/creatures.xml";
 	
 	public static PhylomonType[] parsePhylomon(InputStream xml){
+		
 		PhylomonType[] database;
 		try 
 		{	
@@ -73,6 +74,14 @@ public  class XmlParser {
 			attacks = new Attack[0];
 		}
 		return attacks;
+	}
+	
+	
+	public static Attack getAttacks(Element element){
+		Attack attack;
+		NodeList nodes = element.getElementsByTagName("attack");		
+		attack =new Attack((Element) nodes.item(0));
+		return attack;
 	}
 	
 	

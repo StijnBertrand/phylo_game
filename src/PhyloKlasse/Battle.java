@@ -27,25 +27,25 @@ public class Battle {
 	private Phylomon[] visitorTeam;
 	private int home;
 	private int visitor;
-	private Attack[] attacks;
+
 	
 	private boolean aanHome;
 	
-	public Battle(Phylomon[] homeTeam,int homefirst,Phylomon[] visitorTeam,int visitorfirst,Attack[] attacks){
+	public Battle(Phylomon[] homeTeam,int homefirst,Phylomon[] visitorTeam,int visitorfirst){
 		this.homeTeam = homeTeam;
 		this.visitorTeam = visitorTeam;
 		this.home = homefirst;
 		this.visitor = visitorfirst;
-		this.attacks = attacks;
+
 		aanHome = true;
 		messageQueue.add(0);
 	}
 	
-	public void attack(){
+	public void attack(int i){
 		Attack attack;
 		messageQueue.add(5);
 		if (aanHome){
-			attack = attacks[homeTeam[home].getAttackId()];
+			attack = homeTeam[home].getAttack(i);
 			//Attack and put the attackers name, the attack name and the damage done on the InfoQueue
 			infoQueue.add(homeTeam[home].getName());
 			infoQueue.add(attack.getName());
@@ -67,7 +67,7 @@ public class Battle {
 				messageQueue.add(1);
 			}
 		}else{
-			attack = attacks[visitorTeam[visitor].getAttackId()];
+			attack = visitorTeam[visitor].getAttack(i);
 			//Attack and put the attackers name, the attack name and the damage done on the InfoQueue
 			infoQueue.add(visitorTeam[visitor].getName());
 			infoQueue.add(attack.getName());

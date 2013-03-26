@@ -5,7 +5,10 @@
 		<HP>100</HP>
 		<experienceGroup>0</experienceGroup>
 		<baseXp>100</baseXp>
-		<attackId>0</attackId>
+		<attack id="0">
+        <name> watergun </name>
+        <damage>30</damage>  
+    	</attack>
 		<picLocatie>humpback_whale</picLocatie>
 </phylomon>
 <phylomon>
@@ -13,7 +16,10 @@
 <HP>50</HP>
 <experienceGroup>0</experienceGroup>
 <baseXp>100</baseXp>
-<attackId>1</attackId>
+<attack id="1">
+        <name> zagen </name>
+        <damage>10000</damage>  
+    </attack>
 <picLocatie>noimage</picLocatie>
 </phylomon>
 <phylomon>
@@ -21,7 +27,10 @@
 <HP>50</HP>
 <experienceGroup>0</experienceGroup>
 <baseXp>100</baseXp>
-<attackId>2</attackId>
+<attack id="0">
+        <name> watergun </name>
+        <damage>30</damage>  
+    	</attack>
 <picLocatie>noimage</picLocatie>
 </phylomon>
 <phylomon>
@@ -29,7 +38,10 @@
 <HP>75</HP>
 <experienceGroup>0</experienceGroup>
 <baseXp>100</baseXp>
-<attackId>0</attackId>
+<attack id="2">
+        <name> lol rage </name>
+        <damage>40</damage>  
+    </attack> 
 <picLocatie>noimage</picLocatie>
 </phylomon>
 </resources>

@@ -11,7 +11,8 @@ public class PhylomonType {
 	private int experienceGroup;
 	// this variable is used to calculate how much experience this Phylomon should yield when defeated
 	private int baseXp;
-	private int attackId;
+
+	private Attack attack;
 
 	
 	private String picLocatie;
@@ -20,13 +21,16 @@ public class PhylomonType {
 	PhylomonType(Element element){
 		this.name = XmlParser.getValue("Name", element);
 		this.HP = Integer.valueOf(XmlParser.getValue("HP", element));
-		this.attackId = Integer.valueOf(XmlParser.getValue("attackId", element));
 		this.experienceGroup = Integer.valueOf(XmlParser.getValue("experienceGroup", element));
 		this.baseXp = Integer.valueOf(XmlParser.getValue("baseXp", element));
+
+		
+		attack = XmlParser.getAttacks(element);
+		
+		
+		
 		
 		this.picLocatie = XmlParser.getValue("picLocatie", element);
-		
-
 	}
 	
 	//getters:
@@ -39,14 +43,15 @@ public class PhylomonType {
 	public int getXpClass(){
 		return 	experienceGroup;
 	}
-	public int getAttackId() {
-		return attackId;
-	}
+
 	public int getBaseXp(){
 		return baseXp;
 	}
 	public String getPicLocatie(){
 		return picLocatie;
+	}
+	public Attack getAttack(){
+		return attack;
 	}
 	
 }

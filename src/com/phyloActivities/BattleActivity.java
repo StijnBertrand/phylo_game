@@ -4,6 +4,7 @@ package com.phyloActivities;
 
 import com.phylogame.R;
 
+import PhyloKlasse.Attack;
 import PhyloKlasse.Battle;
 import PhyloKlasse.Phylomon;
 import PhyloKlasse.PhylomonType;
@@ -26,9 +27,9 @@ public class BattleActivity extends Activity implements OnTouchListener{
 	PhyloApplication app;	
 	Battle battle;
 	
-	Button attack, change, bag, run;
+	Button attack, change, bag, run,attack1,attack2,attack3,attack4;
 	TextView message,hph,hpv;
-	TableLayout menu;
+	TableLayout menu, attacks;
 	
 	int activityResult;
 	// variable used in the on touch listener
@@ -48,10 +49,12 @@ public class BattleActivity extends Activity implements OnTouchListener{
 		
 			
 		battle = new Battle(app.getMyPhylomon(),getIntent().getExtras().getInt("myfirst"),
-							new Phylomon[]{new Phylomon(app.getDatabase()[0],5)},0,
-							app.getAttacks());
+							new Phylomon[]{new Phylomon(app.getDatabase()[0],5)},0
+							);
 		
 		menu = (TableLayout) findViewById(R.id.menu);
+		initializeMenu();
+		attacks = (TableLayout) findViewById(R.id.attacks4);
 		initializeMenu();
 		
 		draw();		
@@ -139,7 +142,7 @@ public class BattleActivity extends Activity implements OnTouchListener{
 	
 	
 	private void LetVisitorPlay(){
-		battle.attack();
+		battle.attack(0);
 		draw();
 		next();
 	}
@@ -158,9 +161,7 @@ public class BattleActivity extends Activity implements OnTouchListener{
 			@Override
 			public void onClick(View v) {
 				hideMenu();
-				battle.attack();
-				draw();
-				next();
+				showAttacks();
 				}
 			}
 		);
@@ -217,6 +218,82 @@ public class BattleActivity extends Activity implements OnTouchListener{
 	private void hideMenu(){
 		menu.setVisibility(TableLayout.GONE);
 	}
+	
+	
+	private void showAttacks(){
+		Attack curr;
+		curr = battle.getHome().getAttack(0);
+		attack1 = (Button) findViewById(R.id.attack1);
+		attack1.setText(curr.getName());
+		attack1.setOnClickListener(
+				new OnClickListener(){
+					@Override
+					public void onClick(View v) {
+						hideAttacks();
+						battle.attack(0);
+						draw();
+						next();
+						}
+					}
+				);
+		
+		curr = battle.getHome().getAttack(1);
+		if(curr != null){
+			attack2 = (Button) findViewById(R.id.attack2);
+			attack2.setText(curr.getName());
+			attack2.setOnClickListener(
+					new OnClickListener(){
+						@Override
+						public void onClick(View v) {
+							hideAttacks();
+							battle.attack(1);
+							draw();
+							next();
+							}
+						}
+					);
+		}
+		
+		curr = battle.getHome().getAttack(2);
+		if(curr != null){
+			attack3 = (Button) findViewById(R.id.attack3);
+			attack3.setText(curr.getName());
+			attack3.setOnClickListener(
+					new OnClickListener(){
+						@Override
+						public void onClick(View v) {
+							hideAttacks();
+							battle.attack(2);
+							draw();
+							next();
+							}
+						}
+					);
+		}
+		
+		curr = battle.getHome().getAttack(3);
+		if(curr != null){
+			attack4 = (Button) findViewById(R.id.attack4);
+			attack4.setText(curr.getName());
+			attack4.setOnClickListener(
+					new OnClickListener(){
+						@Override
+						public void onClick(View v) {
+							hideAttacks();
+							battle.attack(3);
+							draw();
+							next();
+							}
+						}
+					);
+		}		
+		attacks.setVisibility(TableLayout.VISIBLE);
+	}
+	
+	private void hideAttacks(){
+		attacks.setVisibility(TableLayout.GONE);
+	}
+	
 	private void endBattle(){
 		//app.save();
 		finish();

@@ -6,11 +6,14 @@ public class Phylomon {
 	int level;
 	int Xp;
 	int XpForNext;
+	Attack[] attacks;
 
 	
 	public Phylomon(PhylomonType type,int level){
 		this.type = type;
 		this.hp = type.getMaxHp();
+		this.attacks = new Attack[4];
+		attacks[0] = type.getAttack();
 		if(level>5 && level<100){
 			this.level = level;	
 		}else{
@@ -65,6 +68,11 @@ public class Phylomon {
 	public int getLevel(){
 		return level;
 	}
+	
+	public Attack getAttack(int i){
+		return attacks[i];
+	}
+	
 
 	//getters from the type
 	public String getName(){
@@ -77,10 +85,6 @@ public class Phylomon {
 
 	public String getPicLocatie(){
 		return type.getPicLocatie();
-	}
-
-	public int getAttackId() {	
-		return type.getAttackId();
 	}
 	
 	public int getBaseXp(){

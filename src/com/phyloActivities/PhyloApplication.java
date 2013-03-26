@@ -23,7 +23,7 @@ import android.util.Log;
 
 public class PhyloApplication extends Application{
 	private PhylomonType types[];
-	private Attack[] attacks;
+
 	
 	//momenteel aan het werken (peroonlijke phylomon)
 	//writable private(meaning that only this application can read and write it) file on the android device
@@ -41,10 +41,6 @@ public class PhyloApplication extends Application{
 	
 	public PhylomonType[] getDatabase(){
 		return types;
-	}
-	
-	public Attack[] getAttacks() {
-		return attacks;
 	}
 	
 	public Phylomon[] getMyPhylomon(){
@@ -112,7 +108,7 @@ public class PhyloApplication extends Application{
 	//method that initializes the database (the attacks array and the phylomontypes array)
 	private void initialiseerDB(){		
 		initPhylomonTypes();
-		initAttacks();
+
 	}
 	
 	//method that initializes the phylomontypes array
@@ -124,19 +120,6 @@ public class PhyloApplication extends Application{
             this.types = XmlParser.parsePhylomon(phylomonStream);    
         } catch (IOException e) {
         	this.types = new PhylomonType[0];
-            Log.e("tag", e.getMessage());
-        }  
-	}
-	
-	//method that initializes the attacks array 
-	private void initAttacks(){
-		InputStream attackStream;
-		AssetManager assetManager = getAssets();   
-        try {
-        	attackStream = assetManager.open("attacks.xml");
-            this.attacks = XmlParser.parseAttacks(attackStream);    
-        } catch (IOException e) {
-        	this.attacks = new Attack[0];
             Log.e("tag", e.getMessage());
         }  
 	}

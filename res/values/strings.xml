@@ -12,5 +12,6 @@
     <string name="My_Phylomon">My Phylomon</string>
     <string name="Bag">BAg</string>
     <string name="Run_Away">Run Away</string>
+    <string name="empty">empty</string>
 
 </resources>
