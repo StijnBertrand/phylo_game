@@ -1,5 +1,7 @@
 package PhyloKlasse;
 
+import android.nfc.NdefMessage;
+
 public class Phylomon {
 	PhylomonType type;
 	int hp;
@@ -90,4 +92,5 @@ public class Phylomon {
 	public int getBaseXp(){
 		return type.getBaseXp();
 	}
+		
 }

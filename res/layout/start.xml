@@ -29,5 +29,14 @@
         android:layout_alignRight="@+id/battle"
         android:layout_below="@+id/battle"
         android:text="@string/My_Phylomon" />
+    
+    <Button
+        android:id="@+id/options"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/My_Phylomon"
+        android:layout_alignRight="@+id/My_Phylomon"
+        android:layout_below="@+id/My_Phylomon"
+        android:text="@string/Options" />
 
 </RelativeLayout>

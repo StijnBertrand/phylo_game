@@ -23,19 +23,15 @@ public class Battle {
 	private Queue<String> infoQueue = new LinkedList<String>();
 	
 	//variables for the battle
-	private Phylomon[] homeTeam;
-	private Phylomon[] visitorTeam;
-	private int home;
-	private int visitor;
+	private Phylomon home;
+	private Phylomon visitor;
 
 	
 	private boolean aanHome;
 	
-	public Battle(Phylomon[] homeTeam,int homefirst,Phylomon[] visitorTeam,int visitorfirst){
-		this.homeTeam = homeTeam;
-		this.visitorTeam = visitorTeam;
-		this.home = homefirst;
-		this.visitor = visitorfirst;
+	public Battle(Phylomon home,Phylomon visitor){
+		this.home = home;
+		this.visitor = visitor;
 
 		aanHome = true;
 		messageQueue.add(0);
@@ -45,67 +41,84 @@ public class Battle {
 		Attack attack;
 		messageQueue.add(5);
 		if (aanHome){
-			attack = homeTeam[home].getAttack(i);
+			attack = home.getAttack(i);
 			//Attack and put the attackers name, the attack name and the damage done on the InfoQueue
-			infoQueue.add(homeTeam[home].getName());
+			infoQueue.add(home.getName());
 			infoQueue.add(attack.getName());
-			infoQueue.add(Integer.toString(attack.execute(homeTeam[home],visitorTeam[visitor])));
+			infoQueue.add(Integer.toString(attack.execute(home,visitor)));
 			
 			//see if the Phylomon has fainted
-			if(visitorTeam[visitor].dead()){
+			if(visitor.dead()){
 				//Message to tell that the Phylomon has fainted
 				messageQueue.add(8);
-				infoQueue.add(visitorTeam[visitor].getName());
+				infoQueue.add(visitor.getName());
 				//divide the experience gained
-				divideXp(homeTeam,homeTeam[home],visitorTeam[visitor]);
-				if(battleFinished(visitorTeam)){
-					messageQueue.add(4);
-				}else{
-					messageQueue.add(3);
-				}
-			}else{
-				messageQueue.add(1);
+				
+				//divideXp(homeTeam,home,visitor);	
 			}
+			messageQueue.add(1);
 		}else{
-			attack = visitorTeam[visitor].getAttack(i);
+			attack = visitor.getAttack(i);
 			//Attack and put the attackers name, the attack name and the damage done on the InfoQueue
-			infoQueue.add(visitorTeam[visitor].getName());
+			infoQueue.add(visitor.getName());
 			infoQueue.add(attack.getName());
-			infoQueue.add(Integer.toString(attack.execute(visitorTeam[visitor],homeTeam[home])));
+			infoQueue.add(Integer.toString(attack.execute(visitor,home)));
 			
 			//see if the Phylomon has fainted
-			if(homeTeam[home].dead()){
+			if(home.dead()){
 				//Message to tell that the Phylomon has fainted
 				messageQueue.add(8);
-				infoQueue.add(homeTeam[home].getName());
+				infoQueue.add(home.getName());
 				//divide the experience gained
-				divideXp(visitorTeam,visitorTeam[visitor],homeTeam[home]);
-				if(battleFinished(homeTeam)){
-					messageQueue.add(4);
-				}else{
-					messageQueue.add(2);
-				}
-			}else{
-				messageQueue.add(0);
+				//divideXp(visitorTeam,visitor,home);
 			}
+			messageQueue.add(0);
 		}	
 		aanHome = !aanHome;
 	}
 	
-	public void change(int next){
+	
+	public void changeHome(Phylomon next){
+		if(home != null)if(!home.dead())aanHome = !aanHome;
+		
+		if(next == null){
+			infoQueue.add(home.getName());
+			messageQueue.add(10);
+			messageQueue.add(2);
+			
+		}else if(aanHome){
+			messageQueue.add(6);
+			infoQueue.add(next.getName());
+			messageQueue.add(0);
+			
+		}else{
+
+			messageQueue.add(6);
+			infoQueue.add(next.getName());
+			messageQueue.add(1);
+		}
+		
+		
+		this.home = next;	
+	
+		
+		
+	}
+	
+	public void change(Phylomon next){
 		if(aanHome){
 			// when a Phylomon has fainted is does not take a turn to change
-			if(!homeTeam[home].dead())aanHome = !aanHome;
+			if(!home.dead())aanHome = !aanHome;
 			this.home = next;
 			//the message
-			infoQueue.add(homeTeam[next].getName());
+			infoQueue.add(home.getName());
 			messageQueue.add(6);	
 		}else{
 			// when a Phylomon has fainted is does not take a turn to change
-			if(!visitorTeam[visitor].dead())aanHome = !aanHome;
+			if(!visitor.dead())aanHome = !aanHome;
 			this.visitor = next;
 			//the message
-			infoQueue.add(visitorTeam[next].getName());
+			infoQueue.add(visitor.getName());
 			messageQueue.add(7);
 		}
 		
@@ -127,10 +140,10 @@ public class Battle {
 	
 	
  	public Phylomon getHome(){
-		return homeTeam[home];
+		return home;
 	}
 	public Phylomon getVisitor(){
-		return visitorTeam[visitor];
+		return visitor;
 	}
 		
 
@@ -141,14 +154,6 @@ public class Battle {
 		infoQueue.add(victor.getName());
 		infoQueue.add(Integer.toString(Xp));
 		
-	}
-	//returns true if there are no more Phylomon in the team that can fight
- 	private boolean battleFinished(Phylomon[] team){
-		for(Phylomon phylomon : team){
-			if(phylomon == null)return true;
-			if(!phylomon.dead())return false;
-		}
-		return true;
 	}
 
 }

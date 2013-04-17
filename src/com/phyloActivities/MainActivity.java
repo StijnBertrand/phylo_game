@@ -19,7 +19,7 @@ import android.content.Intent;
 
  
 public class MainActivity extends Activity implements OnClickListener{
-    Button pDBut,battleBut,myPhyloBut;
+    Button pDBut,battleBut,myPhyloBut,optionBut;
     PhyloApplication app;
 	
 	
@@ -36,7 +36,8 @@ public class MainActivity extends Activity implements OnClickListener{
         battleBut.setOnClickListener(this);
         myPhyloBut = (Button)findViewById(R.id.My_Phylomon);
         myPhyloBut.setOnClickListener(this);
-      
+        optionBut = (Button)findViewById(R.id.options);
+        optionBut.setOnClickListener(this);
     }
 
 	@Override
@@ -68,6 +69,9 @@ public class MainActivity extends Activity implements OnClickListener{
 	
 		}else if (v.getId() == R.id.My_Phylomon){
 			intent = new Intent(this,MyPhylomon.class);
+			this.startActivity(intent);
+		}else if (v.getId() == R.id.options){
+			intent = new Intent(this,Options.class);
 			this.startActivity(intent);
 		}
 		

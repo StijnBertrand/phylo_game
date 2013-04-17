@@ -6,12 +6,21 @@ import com.phylogame.R;
 
 import PhyloKlasse.Attack;
 import PhyloKlasse.Battle;
+import PhyloKlasse.NDEF;
 import PhyloKlasse.Phylomon;
 import PhyloKlasse.PhylomonType;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.IntentFilter.MalformedMimeTypeException;
+import android.nfc.NdefMessage;
+import android.nfc.NdefRecord;
+import android.nfc.NfcAdapter;
+import android.nfc.Tag;
+import android.nfc.tech.Ndef;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -24,6 +33,10 @@ import android.widget.TextView;
 
 
 public class BattleActivity extends Activity implements OnTouchListener{
+	NfcAdapter adapter;
+	PendingIntent pendingIntent;
+	Tag tag = null;
+	
 	PhyloApplication app;	
 	Battle battle;
 	
@@ -34,11 +47,19 @@ public class BattleActivity extends Activity implements OnTouchListener{
 	int activityResult;
 	// variable used in the on touch listener
 	boolean touch = false;
+	boolean emptyBallScanAllouwd = false;
+	boolean fullBallScanAllouwd = false;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.battle);
+		
+		
+	    pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+		adapter = NfcAdapter.getDefaultAdapter(this);
+		
+		
 		app = ((PhyloApplication)getApplicationContext());
 		
 		message = (TextView) findViewById(R.id.message);
@@ -47,10 +68,13 @@ public class BattleActivity extends Activity implements OnTouchListener{
 		hph = (TextView) findViewById(R.id.hphome);
 		hpv = (TextView) findViewById(R.id.hpvisitor);
 		
-			
-		battle = new Battle(app.getMyPhylomon(),getIntent().getExtras().getInt("myfirst"),
-							new Phylomon[]{new Phylomon(app.getDatabase()[0],5)},0
-							);
+		if(app.getNFCenabled()){
+			battle = new Battle(null,new Phylomon(app.getDatabase()[0],5));
+			fullBallScanAllouwd = true;
+		}else{
+			battle = new Battle(app.getMyPhylomon()[0],new Phylomon(app.getDatabase()[0],5));
+		}
+		
 		
 		menu = (TableLayout) findViewById(R.id.menu);
 		initializeMenu();
@@ -78,6 +102,7 @@ public class BattleActivity extends Activity implements OnTouchListener{
 
 		switch (n){
 		case 0 : {
+			emptyBallScanAllouwd = true;
 			showMenu();
 			break;
 		}
@@ -85,17 +110,21 @@ public class BattleActivity extends Activity implements OnTouchListener{
 			LetVisitorPlay();
 			break;
 		}
+		
 		case 2 : {
-			getNextPhylomon();
+			message.setText("choose your next phylomon");
 			break;
 		}
+		
 		case 3 : {
 			break;
 		}
+		/*
 		case 4 :{
 			endBattle();
 			break;
 		}
+		*/
 		case 5 :{
 			message.setText(battle.getInfo() + " did " + battle.getInfo() + " and it dit " + battle.getInfo() + " damage");
 			touch = true;
@@ -121,7 +150,19 @@ public class BattleActivity extends Activity implements OnTouchListener{
 			touch = true;
 			break;
 		}
-		
+		case 10:{
+			message.setText(battle.getInfo() + " come back");
+			touch = true;
+			break;
+		}
+		case 11:{
+			message.setText(battle.getInfo() + " returns");
+			touch = true;
+			break;
+		}
+		default : {
+			break;
+		}
 		
 		
 		
@@ -130,21 +171,17 @@ public class BattleActivity extends Activity implements OnTouchListener{
 		}
 	}
 	
-
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	private void LetVisitorPlay(){
-		battle.attack(0);
-		draw();
-		next();
+		if(!battle.getVisitor().dead()){
+			battle.attack(0);
+			draw();
+			next();
+		}else{
+			finish();
+		}
+		
 	}
 	
 	
@@ -160,19 +197,33 @@ public class BattleActivity extends Activity implements OnTouchListener{
 		new OnClickListener(){
 			@Override
 			public void onClick(View v) {
-				hideMenu();
-				showAttacks();
-				}
+				if(battle.getHome() ==null)return;
+				if(!battle.getHome().dead()){
+					hideMenu();
+					showAttacks();
+				}	
 			}
-		);
+		});
+				
+		if(!app.getNFCenabled()){
+			//this puts a listener on the Phylomon button
+			change.setOnClickListener(
+			new OnClickListener(){
+				@Override
+				public void onClick(View v) {
+					hideMenu();
+					getNextPhylomon();	
+				}
+			});
+		}
 		
-		//this puts a listener on the Phylomon button
-		change.setOnClickListener(
+		
+		//this puts a listener on the run away btn
+		run.setOnClickListener(
 		new OnClickListener(){
 			@Override
-			public void onClick(View v) {
-				hideMenu();
-				getNextPhylomon();	
+			public void onClick(View v){
+				finish();
 			}
 		});
 		
@@ -197,10 +248,12 @@ public class BattleActivity extends Activity implements OnTouchListener{
 	    	if(resultCode == RESULT_OK){
 	    		int next = data.getIntExtra("next", -1);
 	    		if(next!= -1){
-	    			battle.change(next);
+	    			battle.change(app.getMyPhylomon()[next]);
 	    			draw();
 	    			next();
-	    		}
+	    		}	
+	    	}else{
+	    		showMenu();
 	    	}
 	    }
 	}
@@ -208,8 +261,12 @@ public class BattleActivity extends Activity implements OnTouchListener{
 	
 	
 
-	private void draw(){	
-		hph.setText(battle.getHome().getHP() + "/" + battle.getHome().getMaxHp());
+	private void draw(){
+		if(battle.getHome() != null){
+			hph.setText(battle.getHome().getHP() + "/" + battle.getHome().getMaxHp());
+		}else{
+			hph.setText("");
+		}
 		hpv.setText(battle.getVisitor().getHP() + "/" + battle.getVisitor().getMaxHp());
 	}
 	private void showMenu(){
@@ -297,9 +354,111 @@ public class BattleActivity extends Activity implements OnTouchListener{
 	private void endBattle(){
 		//app.save();
 		finish();
+	}	
+	
+	@Override
+	public void onBackPressed(){
+		if(attack.getVisibility() == TableLayout.VISIBLE){
+			hideAttacks();
+			showMenu();
+		}
+		
+	}
+	
+	public void onResume(){
+		super.onResume();
+		if(tag != null){
+			try{
+				Ndef ndef = Ndef.get(tag);
+	    		ndef.connect();
+	    		NdefMessage message = ndef.getNdefMessage();
+	    		ndef.close();
+
+	    		Log.i("tag","hier5");
+
+	    		
+				if(fullBallScanAllouwd){
+					Log.i("tag","full ball");
+					try{
+						Phylomon next = NDEF.ndefToPhylomon(message);
+						//you can't choose a phylomon that has alredy fainted
+						if(!next.dead()){
+							NDEF.write(NDEF.getEmptyPhyloNdef(), tag);
+							battle.changeHome(next);
+							fullBallScanAllouwd = false;
+							hideMenu();
+							draw();
+							next();
+						}else{
+							this.message.setText("choose a phylomon that has not yet fainted");
+						}
+					}catch(Exception e){
+						Log.i("tag","exception1");
+					}
+				}else if(emptyBallScanAllouwd){
+					Log.i("tag","empty ball");
+					try{
+						NDEF.write(NDEF.phylomonToNdef(battle.getHome()), tag);
+						battle.changeHome(null);
+						emptyBallScanAllouwd = false;
+						fullBallScanAllouwd = true;
+						hideMenu();
+						draw();
+						next();
+						
+					}catch(Exception e){
+						Log.i("tag","exception2");
+					}
+				}
+				
+			}catch(Exception e){
+				Log.i("tag","exception3");
+			}
+		}
+		if(fullBallScanAllouwd){
+			enablePhylomonScan();
+			Log.i("tag","full ball scan alouwd");
+		}else{
+			enableEmptyBallScan();
+		}
 	}
 	
 	
+	private void enableEmptyBallScan(){
+		//enable the handeling of a empty ball
+		IntentFilter[] filters = new IntentFilter[1]; 
+		filters[0] = NDEF.getEmptyBallFilter();
+		adapter.enableForegroundDispatch(this,PendingIntent.getActivity(this, 0, getIntent(), 0),filters,null);
+	}
+	
+	private void enablePhylomonScan(){
+		//enable the handeling of a Phylomon 
+		IntentFilter[] filters = new IntentFilter[1]; 
+		filters[0] = NDEF.getPhylomonFilter();
+		adapter.enableForegroundDispatch(this,PendingIntent.getActivity(this, 0, getIntent(), 0),filters,null);
+	}
+	
+	
+	@Override
+	protected void onNewIntent(Intent intent){	
+		super.onNewIntent(intent);
+		if(fullBallScanAllouwd && intent.getType().equals(NDEF.PHYLOMON_MIME)){
+			tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+		}
+		if(emptyBallScanAllouwd && intent.getType().equals(NDEF.EMPTY_BALL_MIME)){
+			tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+		}
+		Log.i("tag",intent.getAction()); 
+		Log.i("tag",intent.getType()); 
+
+	}
+	
+	@Override
+	protected void onPause() {
+	    super.onPause();
+	    // deactivate receiving
+	    adapter.disableForegroundDispatch(this);
+	}
 	
 
 }

@@ -18,25 +18,33 @@ import PhyloKlasse.PhylomonType;
 import PhyloKlasse.XmlParser;
 import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.res.AssetManager;
 import android.util.Log;
 
 public class PhyloApplication extends Application{
-	private PhylomonType types[];
-
-	
-	//momenteel aan het werken (peroonlijke phylomon)
+	private SharedPreferences pref;
+	private  Editor editor;
 	//writable private(meaning that only this application can read and write it) file on the android device
 	private static String FILE_NAME = "phylomon.json";
 	private static int MAX_PHYLOMON = 6;
-	private Phylomon[] phylomon;
 	
+	
+	
+	//database of types
+	private PhylomonType types[];
+	//personal phylomon
+	private Phylomon[] phylomon;
+	//options
+	private boolean NFCenabled = true;
 	
 	@Override
     public void onCreate() {
         super.onCreate();
         initialiseerDB(); 
         initializePhylomon();
+        //initializeOptions();
 	}
 	
 	public PhylomonType[] getDatabase(){
@@ -51,6 +59,14 @@ public class PhyloApplication extends Application{
 		return MAX_PHYLOMON;
 	}
 	
+	public boolean getNFCenabled(){
+		return NFCenabled;
+	}
+	public void setNFCenabled(boolean NFCenabled){
+		this.NFCenabled = NFCenabled;
+		editor.putBoolean("NFC", NFCenabled);
+		editor.commit();
+	}
 	//this method can for example be called after a battle is done to save a win or a lose. 
 	public void save(){
 		savePhylomon();
@@ -87,10 +103,12 @@ public class PhyloApplication extends Application{
 		}   	
 	}
 	
+
+	
 	//this stores the players personal phylomon in the applications private file
 	private void savePhylomon(){
 		Gson gson = new Gson();
-		String json = gson.toJson(phylomon);;
+		String json = gson.toJson(phylomon);
 		FileOutputStream fos;
 		try {
 			fos = openFileOutput(FILE_NAME, Context.MODE_PRIVATE);
@@ -122,6 +140,13 @@ public class PhyloApplication extends Application{
         	this.types = new PhylomonType[0];
             Log.e("tag", e.getMessage());
         }  
+	}
+	
+	private void initializeOptions(){
+		pref =  getSharedPreferences ("preferences",MODE_PRIVATE);
+    	editor  = pref.edit();
+		
+    	NFCenabled = pref.getBoolean("NFC", false);
 	}
 	
 }

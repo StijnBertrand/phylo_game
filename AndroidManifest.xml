@@ -4,8 +4,10 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="8"
-        android:targetSdkVersion="15" />
+        android:minSdkVersion="16"
+        android:targetSdkVersion="17" />
+    
+    <uses-permission android:name="android.permission.NFC" />
 
     <application
         android:name="com.phyloActivities.PhyloApplication"
@@ -18,35 +20,50 @@
             android:label="@string/title_activity_main" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         
         <activity
             android:name="com.phyloActivities.ShowPhylomonDatabase"
-            android:label="@string/phylomondatabase" >
-            
+            android:label="@string/phylomondatabase" >     
         </activity>
         
         <activity
-            android:name="com.phyloActivities.ShowPhylomon"
-            android:label="@string/phylomon" >
-            
+            android:name="com.phyloActivities.ShowPhylomonType"
+            android:label="@string/phylomon" >        
         </activity>
         
         <activity
             android:name="com.phyloActivities.BattleActivity"
-            android:label="@string/Battle" >
-            
+            android:label="@string/Battle" >          
         </activity>
         
         <activity
             android:name="com.phyloActivities.MyPhylomon"
-            android:label="@string/My_Phylomon" >
-            
+            android:label="@string/My_Phylomon" >   
+            <intent-filter>
+  				<action android:name="android.nfc.action.NDEF_DISCOVERED"/>
+ 				<category android:name="android.intent.category.DEFAULT"/>
+ 				<data android:mimeType="phylogame/empty ball" />
+ 			</intent-filter> 
         </activity>
         
+        <activity
+            android:name="com.phyloActivities.Options"
+            android:label="@string/Options" >         
+        </activity>
+        
+        <activity
+            android:name="com.phyloActivities.ShowPhylomon"
+            android:label="@string/Phylomon" >      
+            
+            <intent-filter>
+  				<action android:name="android.nfc.action.NDEF_DISCOVERED"/>
+ 				<category android:name="android.intent.category.DEFAULT"/>
+ 				<data android:mimeType="phylogame/phylomon" />
+ 			</intent-filter> 
+        </activity>        
     </application>
 
 </manifest>

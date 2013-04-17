@@ -1,20 +1,31 @@
 package com.phyloActivities;
 
-import com.phylogame.R;
+import java.io.IOException;
 
+import PhyloKlasse.NDEF;
+import PhyloKlasse.Phylomon;
 import PhyloKlasse.PhylomonType;
 import android.app.Activity;
-import android.graphics.drawable.Drawable;
+import android.content.Intent;
+import android.nfc.FormatException;
+import android.nfc.NdefMessage;
+import android.nfc.NdefRecord;
+import android.nfc.NfcAdapter;
+import android.nfc.Tag;
+import android.nfc.tech.Ndef;
 import android.os.Bundle;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.*;
+import android.util.Log;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 
-public class ShowPhylomon extends Activity implements OnClickListener{
+import com.phylogame.R;
+
+public class ShowPhylomon extends Activity {
 	PhyloApplication myapp;
 	ImageView image;
 	TextView nameView;
-	Button back;
+	Phylomon current = null;
 
 	
 	
@@ -25,29 +36,43 @@ public class ShowPhylomon extends Activity implements OnClickListener{
         
         // gets the database from the application
         myapp = ((PhyloApplication)getApplicationContext());
-        //gets the number of the phylomon in the database
-        int i = Integer.valueOf(getIntent().getStringExtra("position"));
-        PhylomonType current =  myapp.getDatabase()[i];
+        nameView = (TextView)findViewById(R.id.name2);
         
         
-        image = (ImageView)findViewById(R.id.imageView1);
+        Intent intent = getIntent(); 
+        int activityId = getIntent().getIntExtra("activityId",-1);
+        if (activityId == 2){
+        	int i = getIntent().getIntExtra("position",-1);
+            if(i!= -1){
+            	current =  myapp.getMyPhylomon()[i];
+            	display();
+            } 
+        }else if(NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())){
+        	try{
+        		Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+        		Ndef ndef = Ndef.get(tag);
+        		ndef.connect();
+        		NdefMessage message = ndef.getNdefMessage();
+        		ndef.close();
+        		//get the Phylomon object and display it
+        		current = NDEF.ndefToPhylomon(message);    
+	        	if(current != null)display();
+        	}catch (Exception e) {
+        		finish();
+        	}
+        }
+	}
+	
+	
+	private void display(){
+		//show a picture
+        image = (ImageView)findViewById(R.id.imageView2);
         String picloc = current.getPicLocatie();
-        
         int imageResource = getResources().getIdentifier(picloc , "drawable", getPackageName());
         image.setImageResource(imageResource);
         
         //showing the name
-        nameView = (TextView)findViewById(R.id.name);
+        nameView = (TextView)findViewById(R.id.name2);
         nameView.setText(current.getName());
-        
-        //back Button
-        back = (Button) findViewById(R.id.back);
-        back.setOnClickListener(this);
-    }
-	
-	@Override
-	public void onClick(View v) {
-		this.onBackPressed();
-		
 	}
 }

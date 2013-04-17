@@ -93,7 +93,7 @@ public class ShowPhylomonDatabase extends Activity implements OnClickListener, O
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
 		
-		Intent intent = new Intent(this ,ShowPhylomon.class);
+		Intent intent = new Intent(this ,ShowPhylomonType.class);
 		intent.putExtra("position",Integer.toString(position) );
 		this.startActivity(intent);
 		

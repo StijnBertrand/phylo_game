@@ -13,5 +13,9 @@
     <string name="Bag">BAg</string>
     <string name="Run_Away">Run Away</string>
     <string name="empty">empty</string>
+    <string name="Options">Options</string>
+    <string name="NFC_enabled">NFC enabled</string>
+    <string name="NFCHandle">NFCHandle</string>
+    <string name="Phylomon">Phylomon</string>
 
 </resources>

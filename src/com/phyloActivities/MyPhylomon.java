@@ -4,11 +4,16 @@ import java.util.ArrayList;
 
 import com.phylogame.R;
 
+import PhyloKlasse.NDEF;
 import PhyloKlasse.Phylomon;
 import PhyloKlasse.PhylomonType;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.nfc.NdefMessage;
+import android.nfc.NfcAdapter;
+import android.nfc.Tag;
+import android.nfc.tech.Ndef;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,34 +27,25 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class MyPhylomon extends Activity implements OnClickListener {
+public class MyPhylomon extends Activity implements OnItemClickListener{
 	PhyloApplication app;
 	ListView listView;
-	Button back;
-	
+
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.myphylomon);
-        app = ((PhyloApplication)getApplicationContext());
-        
-        
-        
-        listView = (ListView) findViewById(R.id.phylomonlist);
-        back = (Button) findViewById(R.id.back);
-
+        app = ((PhyloApplication)getApplicationContext());      
+        initListView();    
+	}
+	
+	private void initListView(){
+		listView = (ListView) findViewById(R.id.phylomonlist);
         //make an adapter for the ListView
         MyAdapter adapter = new MyAdapter(this,	app.getMyPhylomon());
-
-
         // Assign adapter to ListView
         listView.setAdapter(adapter);
-        if(getIntent().getIntExtra("activityId",-1)== 1){
-        	listView.setOnItemClickListener(new OnItemClickListenerForBattle());
-        }
-        
-        // assign listener to button
-        back.setOnClickListener(this);
+        listView.setOnItemClickListener(this);
 	}
 	
 	
@@ -77,10 +73,12 @@ public class MyPhylomon extends Activity implements OnClickListener {
 			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			View rowView = inflater.inflate(R.layout.phylomonrow, parent, false);
 			
+			
 			Phylomon curr = phylomon[position];
 			if(curr != null){
 				TextView name = (TextView)rowView.findViewById(R.id.name);
-				TextView health = (TextView)rowView.findViewById(R.id.health);
+				TextView health = (TextView)rowView.findViewById(R.id.health);						
+
 				name.setText(curr.getName());
 				health.setText(curr.getHP() + "/" + curr.getMaxHp());
 			}else{
@@ -90,32 +88,46 @@ public class MyPhylomon extends Activity implements OnClickListener {
 			return rowView; 
 		}		
 	}
-	
-	private class OnItemClickListenerForBattle implements OnItemClickListener{
-		@Override
-		public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-			 Intent intent=new Intent();
-			 Phylomon item = app.getMyPhylomon()[position];
-			 if(item != null){
-				 if(!item.dead()){
-					 intent.putExtra("next", position);
-			         setResult(RESULT_OK, intent);
-			         finish(); 
-				 }	 
-			 }	
-		}	
-	}
-	
 
-	
 	@Override
-	public void onClick(View v) {
-
-		
+	public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+		Intent intent = getIntent();
+		Phylomon item = app.getMyPhylomon()[position];
+		if(item == null)return;
+		if(NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())){
+        	try{
+        		Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+        		NDEF.write(NDEF.phylomonToNdef(item), tag);
+        		app.getMyPhylomon()[position] = null;
+        		initListView();
+			}catch (Exception e) {
+	    		finish();
+	    	}
+		}else{
+			//in this case the activity was started by another activity
+			//-MainActivity => id = / (default will be called)
+			//-battleActivity => id = 1
+			int activityId = getIntent().getIntExtra("activityId",-1);
+			switch(activityId){
+			case 1:
+				intent=new Intent();
+				if(item != null){
+					if(!item.dead()){
+						intent.putExtra("next", position);
+						setResult(RESULT_OK, intent);
+						finish(); 
+					}	 
+				}
+				break;					
+			default:
+				if(item != null){
+					intent = new Intent(this ,ShowPhylomon.class);
+					intent.putExtra("activityId",2);
+					intent.putExtra("position",position);
+					this.startActivity(intent);
+				}
+				
+			}	
+		}			
 	}
-	
-	
-	
-	
-
 }
