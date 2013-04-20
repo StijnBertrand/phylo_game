@@ -14,17 +14,17 @@ import android.content.res.AssetManager;
 
 
 public  class XmlParser {
-	private static String path = "/creatures.xml";
+	private static Attack[] attacks;
 	
-	public static PhylomonType[] parsePhylomon(InputStream xml){
-		
+	public static PhylomonType[] getDatabase(InputStream typesStream,InputStream attackStream){
+		parseAttacksDatabase(attackStream);
 		PhylomonType[] database;
 		try 
 		{	
 			
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-			Document doc = dBuilder.parse(xml);
+			Document doc = dBuilder.parse(typesStream);
 			
 			doc.getDocumentElement().normalize();
 			
@@ -35,7 +35,7 @@ public  class XmlParser {
 				Node node = nodes.item(i);
 				if (node.getNodeType() == Node.ELEMENT_NODE) {
 					Element element = (Element) node;
-					PhylomonType current = new PhylomonType(element);
+					PhylomonType current = parseType(element);
 					database[i] = current;
 				}
 			}
@@ -46,12 +46,49 @@ public  class XmlParser {
 		return database;
 	}
 	
-	public static Attack[] parseAttacks(InputStream attackStream) {
-		Attack[] attacks;
+
+	
+	private static PhylomonType parseType(Element element){
 		
+		String name = getValue("Name", element);
+		int HP = Integer.valueOf(getValue("HP", element));
+		int experienceGroup = Integer.valueOf(getValue("experienceGroup", element));
+		int baseXp = Integer.valueOf(getValue("baseXp", element));
+		
+		
+		Element attacksElement = (Element)element.getElementsByTagName("attacks").item(0);
+		Attack[] attacks = parseAttacks(attacksElement);
+				//attacks[Integer.valueOf(XmlParser.getValue("attack", element))];
+		
+		
+		
+		
+		String picLocatie = XmlParser.getValue("picLocatie", element);
+		return new PhylomonType(name,HP,experienceGroup,baseXp,attacks,picLocatie);
+	}
+	
+	private static Attack[] parseAttacks(Element element){
+		
+		NodeList nodes = element.getElementsByTagName("attack");
+		Attack[] attacks = new Attack[nodes.getLength()];
+		for (int i = 0; i < nodes.getLength(); i++) {
+			Node node = nodes.item(i);
+			if (node.getNodeType() == Node.ELEMENT_NODE) {
+				attacks[i] = parsePhylomonAttack((Element) node);
+			}
+		}
+		return attacks;
+	}
+	
+	private static Attack parsePhylomonAttack(Element element){
+		int attackId = Integer.valueOf(XmlParser.getValue("id", element));
+		return attacks[attackId];
+	}
+	
+	
+	private static void parseAttacksDatabase(InputStream attackStream) {
 		try 
 		{	
-			
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 			Document doc = dBuilder.parse(attackStream);
@@ -65,28 +102,24 @@ public  class XmlParser {
 				Node node = nodes.item(i);
 				if (node.getNodeType() == Node.ELEMENT_NODE) {
 					Element element = (Element) node;
-					Attack current = new Attack(element);
-					attacks[i] = current;
+					attacks[i] = parseDatabaseAttack(element);
 				}
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			attacks = new Attack[0];
+			attacks = null;
 		}
-		return attacks;
+	}
+	
+	//wordt gebruikt voor parseAttacksDatabase
+	private static Attack parseDatabaseAttack(Element element){
+		String name = XmlParser.getValue("name", element);
+		int damage = Integer.valueOf(XmlParser.getValue("damage", element));
+		return new Attack(name,damage);
 	}
 	
 	
-	public static Attack getAttacks(Element element){
-		Attack attack;
-		NodeList nodes = element.getElementsByTagName("attack");		
-		attack =new Attack((Element) nodes.item(0));
-		return attack;
-	}
-	
-	
-	
-	public static String getValue(String tag, Element element) {
+	private static String getValue(String tag, Element element) {
 		NodeList nodes = element.getElementsByTagName(tag).item(0).getChildNodes();
 		Node node = (Node) nodes.item(0);
 		return node.getNodeValue();

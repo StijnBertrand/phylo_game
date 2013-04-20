@@ -12,25 +12,20 @@ public class PhylomonType {
 	// this variable is used to calculate how much experience this Phylomon should yield when defeated
 	private int baseXp;
 
-	private Attack attack;
+	private Attack[] attacks;
 
 	
 	private String picLocatie;
 	
-	//this constructor makes from a xml element a PhylomonType object
-	PhylomonType(Element element){
-		this.name = XmlParser.getValue("Name", element);
-		this.HP = Integer.valueOf(XmlParser.getValue("HP", element));
-		this.experienceGroup = Integer.valueOf(XmlParser.getValue("experienceGroup", element));
-		this.baseXp = Integer.valueOf(XmlParser.getValue("baseXp", element));
-
-		
-		attack = XmlParser.getAttacks(element);
-		
-		
-		
-		
-		this.picLocatie = XmlParser.getValue("picLocatie", element);
+	
+	
+	PhylomonType(String name,int HP,int experienceGroup,int baseXp,Attack[] attacks,String picLocatie){
+		this.name = name;
+		this.HP = HP;
+		this.experienceGroup = experienceGroup;
+		this.baseXp = baseXp;
+		this.attacks = attacks;
+		this.picLocatie = picLocatie;
 	}
 	
 	//getters:
@@ -50,8 +45,9 @@ public class PhylomonType {
 	public String getPicLocatie(){
 		return picLocatie;
 	}
-	public Attack getAttack(){
-		return attack;
+	//voorlopig zo
+	public Attack[] getAttacks(){
+		return attacks;
 	}
 	
 }

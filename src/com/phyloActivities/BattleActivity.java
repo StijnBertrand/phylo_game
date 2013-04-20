@@ -113,6 +113,7 @@ public class BattleActivity extends Activity implements OnTouchListener{
 		
 		case 2 : {
 			message.setText("choose your next phylomon");
+			showMenu();
 			break;
 		}
 		
@@ -218,12 +219,16 @@ public class BattleActivity extends Activity implements OnTouchListener{
 		}
 		
 		
-		//this puts a listener on the run away btn
+		//this puts a listener on the run away button
 		run.setOnClickListener(
 		new OnClickListener(){
 			@Override
 			public void onClick(View v){
-				finish();
+				if(battle.getHome() != null && app.getNFCenabled()){
+					message.setText("call " + battle.getHome().getName() + " back before running away.");
+				}else{
+					finish();
+				}
 			}
 		});
 		
@@ -240,7 +245,7 @@ public class BattleActivity extends Activity implements OnTouchListener{
 	}
 	
 	//this procedure gets Phylomon the players chose 
-	//and calls the Battle.choose() method.
+	//and calls the Battle.change() method.
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 	    super.onActivityResult(requestCode, resultCode, data);
@@ -276,7 +281,7 @@ public class BattleActivity extends Activity implements OnTouchListener{
 		menu.setVisibility(TableLayout.GONE);
 	}
 	
-	
+	//initializes the attack buttons and shows the buttons zo the player
 	private void showAttacks(){
 		Attack curr;
 		curr = battle.getHome().getAttack(0);
@@ -362,7 +367,6 @@ public class BattleActivity extends Activity implements OnTouchListener{
 			hideAttacks();
 			showMenu();
 		}
-		
 	}
 	
 	public void onResume(){
@@ -372,13 +376,8 @@ public class BattleActivity extends Activity implements OnTouchListener{
 				Ndef ndef = Ndef.get(tag);
 	    		ndef.connect();
 	    		NdefMessage message = ndef.getNdefMessage();
-	    		ndef.close();
-
-	    		Log.i("tag","hier5");
-
-	    		
+	    		ndef.close();	    		
 				if(fullBallScanAllouwd){
-					Log.i("tag","full ball");
 					try{
 						Phylomon next = NDEF.ndefToPhylomon(message);
 						//you can't choose a phylomon that has alredy fainted
@@ -392,11 +391,8 @@ public class BattleActivity extends Activity implements OnTouchListener{
 						}else{
 							this.message.setText("choose a phylomon that has not yet fainted");
 						}
-					}catch(Exception e){
-						Log.i("tag","exception1");
-					}
+					}catch(Exception e){}
 				}else if(emptyBallScanAllouwd){
-					Log.i("tag","empty ball");
 					try{
 						NDEF.write(NDEF.phylomonToNdef(battle.getHome()), tag);
 						battle.changeHome(null);
@@ -406,18 +402,13 @@ public class BattleActivity extends Activity implements OnTouchListener{
 						draw();
 						next();
 						
-					}catch(Exception e){
-						Log.i("tag","exception2");
-					}
+					}catch(Exception e){}
 				}
 				
-			}catch(Exception e){
-				Log.i("tag","exception3");
-			}
+			}catch(Exception e){}
 		}
 		if(fullBallScanAllouwd){
 			enablePhylomonScan();
-			Log.i("tag","full ball scan alouwd");
 		}else{
 			enableEmptyBallScan();
 		}
@@ -448,15 +439,11 @@ public class BattleActivity extends Activity implements OnTouchListener{
 		if(emptyBallScanAllouwd && intent.getType().equals(NDEF.EMPTY_BALL_MIME)){
 			tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 		}
-		Log.i("tag",intent.getAction()); 
-		Log.i("tag",intent.getType()); 
-
 	}
 	
 	@Override
 	protected void onPause() {
 	    super.onPause();
-	    // deactivate receiving
 	    adapter.disableForegroundDispatch(this);
 	}
 	

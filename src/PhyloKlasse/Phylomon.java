@@ -15,7 +15,7 @@ public class Phylomon {
 		this.type = type;
 		this.hp = type.getMaxHp();
 		this.attacks = new Attack[4];
-		attacks[0] = type.getAttack();
+		attacks[0] = type.getAttacks()[0];
 		if(level>5 && level<100){
 			this.level = level;	
 		}else{

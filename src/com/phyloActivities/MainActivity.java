@@ -38,6 +38,9 @@ public class MainActivity extends Activity implements OnClickListener{
         myPhyloBut.setOnClickListener(this);
         optionBut = (Button)findViewById(R.id.options);
         optionBut.setOnClickListener(this);
+        
+        Log.i("stijn",Long.toString(app.getAppId().getMostSignificantBits()));
+        Log.i("stijn",Long.toString(app.getAppId().getLeastSignificantBits()));
     }
 
 	@Override
@@ -47,25 +50,31 @@ public class MainActivity extends Activity implements OnClickListener{
 			intent = new Intent(this,ShowPhylomonDatabase.class);
 			this.startActivity(intent);
 		}else if(v.getId() == R.id.battle){
-			//to start a battle there has to be at least one phylomon that is not dead
-			int i = 0;
-			for(Phylomon curr : app.getMyPhylomon()){
-				if(curr == null){
-					i = app.getMaxPhylomon();
-					break;
+			if(!app.getNFCenabled()){
+				//to start a battle there has to be at least one phylomon that is not dead
+				int i = 0;
+				for(Phylomon curr : app.getMyPhylomon()){
+					if(curr == null){
+						i = app.getMaxPhylomon();
+						break;
+					}
+					if(curr.dead())	i++;
+					else break;
 				}
-				if(curr.dead())	i++;
-				else break;
-			}
-			//if we found one we start the battle else we notify the user
-			if(i == app.getMaxPhylomon()){
-				//alert dialog 
+				//if we found one we start the battle else we notify the user
+				if(i == app.getMaxPhylomon()){
+					//alert dialog 
+				}else{
+					intent = new Intent(this,BattleActivity.class);
+					//pass on the first not dead phylomon
+					intent.putExtra("myfirst", (int)i);
+					this.startActivity(intent);
+				}
 			}else{
 				intent = new Intent(this,BattleActivity.class);
-				//pass on the first not dead phylomon
-				intent.putExtra("myfirst", (int)i);
 				this.startActivity(intent);
 			}
+			
 	
 		}else if (v.getId() == R.id.My_Phylomon){
 			intent = new Intent(this,MyPhylomon.class);

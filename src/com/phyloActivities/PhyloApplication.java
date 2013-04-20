@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.UUID;
 
 
 import com.google.gson.*;
@@ -23,28 +24,29 @@ import android.content.SharedPreferences.Editor;
 import android.content.res.AssetManager;
 import android.util.Log;
 
-public class PhyloApplication extends Application{
+public class PhyloApplication extends Application{ 
 	private SharedPreferences pref;
 	private  Editor editor;
 	//writable private(meaning that only this application can read and write it) file on the android device
 	private static String FILE_NAME = "phylomon.json";
 	private static int MAX_PHYLOMON = 6;
 	
-	
-	
 	//database of types
-	private PhylomonType types[];
+	private PhylomonType[] types;
 	//personal phylomon
 	private Phylomon[] phylomon;
+	
 	//options
 	private boolean NFCenabled = true;
+	//application identifier
+	UUID appID;
 	
 	@Override
     public void onCreate() {
         super.onCreate();
-        initialiseerDB(); 
+        initializeDB(); 
         initializePhylomon();
-        //initializeOptions();
+        initializeAppData();
 	}
 	
 	public PhylomonType[] getDatabase(){
@@ -67,6 +69,11 @@ public class PhyloApplication extends Application{
 		editor.putBoolean("NFC", NFCenabled);
 		editor.commit();
 	}
+	
+	public UUID getAppId(){
+		return appID;
+	}
+	
 	//this method can for example be called after a battle is done to save a win or a lose. 
 	public void save(){
 		savePhylomon();
@@ -124,29 +131,45 @@ public class PhyloApplication extends Application{
 		
 	
 	//method that initializes the database (the attacks array and the phylomontypes array)
-	private void initialiseerDB(){		
+	private void initializeDB(){		
 		initPhylomonTypes();
 
 	}
 	
 	//method that initializes the phylomontypes array
 	private void initPhylomonTypes(){
-		InputStream phylomonStream;
+		InputStream phylomonStream,attackStream;
 		AssetManager assetManager = getAssets();   
         try {
         	phylomonStream = assetManager.open("creatures.xml");
-            this.types = XmlParser.parsePhylomon(phylomonStream);    
+        	attackStream = assetManager.open("attacks.xml");
+            this.types = XmlParser.getDatabase(phylomonStream, attackStream);  
         } catch (IOException e) {
         	this.types = new PhylomonType[0];
             Log.e("tag", e.getMessage());
         }  
 	}
 	
-	private void initializeOptions(){
+	private void initializeAppData(){
 		pref =  getSharedPreferences ("preferences",MODE_PRIVATE);
     	editor  = pref.edit();
 		
-    	NFCenabled = pref.getBoolean("NFC", false);
+    	NFCenabled = pref.getBoolean("NFC", true);
+    	
+    	//initializes the applications id
+    	long mostSigBits = pref.getLong("most",0);
+    	long leastSigBits = pref.getLong("least",0);
+    	if(mostSigBits == 0 && leastSigBits == 0){
+    		//in this case the application doesen't have a id yet so it gets one
+    		appID = UUID.randomUUID();
+    		editor.putLong("most", appID.getMostSignificantBits());
+    		editor.putLong("least", appID.getLeastSignificantBits());
+    		editor.commit();
+    	}else{
+        	appID = new UUID(mostSigBits,leastSigBits);
+
+    	}
+    	
 	}
 	
 }
