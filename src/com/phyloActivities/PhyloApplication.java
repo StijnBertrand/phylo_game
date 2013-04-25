@@ -29,17 +29,18 @@ public class PhyloApplication extends Application{
 	private  Editor editor;
 	//writable private(meaning that only this application can read and write it) file on the android device
 	private static String FILE_NAME = "phylomon.json";
-	private static int MAX_PHYLOMON = 6;
+	private static int TEAM_MAXIMUM = 6;
 	
 	//database of types
 	private PhylomonType[] types;
-	//personal phylomon
-	private Phylomon[] phylomon;
+	//the player his team (only relevant when NFC is disabled
+	private Phylomon[] team;
 	
 	//options
 	private boolean NFCenabled = true;
 	//application identifier
 	UUID appID;
+	int teamCount;
 	
 	@Override
     public void onCreate() {
@@ -53,12 +54,19 @@ public class PhyloApplication extends Application{
 		return types;
 	}
 	
-	public Phylomon[] getMyPhylomon(){
-		return phylomon;
+	public Phylomon[] getTeam(){
+		return team;
 	}
 	
-	public int getMaxPhylomon(){
-		return MAX_PHYLOMON;
+	public int getTeamMaximum(){
+		return TEAM_MAXIMUM;
+	}
+	
+	public void removeFromTeam(int i){	
+		for(int n = i; n != TEAM_MAXIMUM ; n++){
+			team[n] = team [n+1];
+		}
+		team[TEAM_MAXIMUM-1]= null;
 	}
 	
 	public boolean getNFCenabled(){
@@ -91,18 +99,18 @@ public class PhyloApplication extends Application{
 			String out = "";
 			while((curr = br.readLine())!=null)out += curr;
 			
-			phylomon = gson.fromJson(out, Phylomon[].class);
+			team = gson.fromJson(out, Phylomon[].class);
 
 		}catch(FileNotFoundException e){
 			//this is executed only the first time the application is executed
-			phylomon = new Phylomon[MAX_PHYLOMON];
+			team = new Phylomon[TEAM_MAXIMUM];
 			//dit is tijdelijk
 			Phylomon first = new Phylomon(types[0],5);
 			Phylomon second = new Phylomon(types[1],7);
 			Phylomon third = new Phylomon(types[2],9);
-			phylomon[0] = first;
-			phylomon[1] = second;
-			phylomon[2] = third;
+			team[0] = first;
+			team[1] = second;
+			team[2] = third;
 			savePhylomon();
 			
 		} catch (IOException e) {
@@ -115,7 +123,7 @@ public class PhyloApplication extends Application{
 	//this stores the players personal phylomon in the applications private file
 	private void savePhylomon(){
 		Gson gson = new Gson();
-		String json = gson.toJson(phylomon);
+		String json = gson.toJson(team);
 		FileOutputStream fos;
 		try {
 			fos = openFileOutput(FILE_NAME, Context.MODE_PRIVATE);
@@ -155,6 +163,7 @@ public class PhyloApplication extends Application{
     	editor  = pref.edit();
 		
     	NFCenabled = pref.getBoolean("NFC", true);
+    	teamCount = pref.getInt("teamCount",1);
     	
     	//initializes the applications id
     	long mostSigBits = pref.getLong("most",0);
@@ -170,6 +179,14 @@ public class PhyloApplication extends Application{
 
     	}
     	
+	}
+	public void saveAppData(){
+		editor.putBoolean("NFC", NFCenabled);
+		editor.putInt("teamCount", teamCount);
+		editor.putLong("most", appID.getMostSignificantBits());
+		editor.putLong("least", appID.getLeastSignificantBits());
+		editor.commit();
+		
 	}
 	
 }

@@ -22,10 +22,12 @@ public class MainActivity extends Activity implements OnClickListener{
     Button pDBut,battleBut,myPhyloBut,optionBut;
     PhyloApplication app;
 	
+    String TAG = "main";
 	
 	/** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
+    	Log.i(TAG,"oncreate");
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.start);
         app = ((PhyloApplication)getApplicationContext());
@@ -39,8 +41,6 @@ public class MainActivity extends Activity implements OnClickListener{
         optionBut = (Button)findViewById(R.id.options);
         optionBut.setOnClickListener(this);
         
-        Log.i("stijn",Long.toString(app.getAppId().getMostSignificantBits()));
-        Log.i("stijn",Long.toString(app.getAppId().getLeastSignificantBits()));
     }
 
 	@Override
@@ -53,16 +53,16 @@ public class MainActivity extends Activity implements OnClickListener{
 			if(!app.getNFCenabled()){
 				//to start a battle there has to be at least one phylomon that is not dead
 				int i = 0;
-				for(Phylomon curr : app.getMyPhylomon()){
+				for(Phylomon curr : app.getTeam()){
 					if(curr == null){
-						i = app.getMaxPhylomon();
+						i = app.getTeamMaximum();
 						break;
 					}
 					if(curr.dead())	i++;
 					else break;
 				}
 				//if we found one we start the battle else we notify the user
-				if(i == app.getMaxPhylomon()){
+				if(i == app.getTeamMaximum()){
 					//alert dialog 
 				}else{
 					intent = new Intent(this,BattleActivity.class);
@@ -85,6 +85,24 @@ public class MainActivity extends Activity implements OnClickListener{
 		}
 		
 		
+	}
+	
+	@Override
+	public void onResume(){
+		super.onResume();
+    	Log.i(TAG,"onResume");
+	}
+	
+	@Override
+	protected void onNewIntent(Intent intent){	
+		super.onNewIntent(intent);
+    	Log.i(TAG,"onNewIntent");
+	}
+	
+	@Override
+	protected void onPause() {
+	    super.onPause();
+    	Log.i(TAG,"onPause");
 	}
 
 }

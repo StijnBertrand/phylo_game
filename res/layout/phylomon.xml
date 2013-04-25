@@ -10,10 +10,19 @@
         android:layout_height="259dp"
         android:layout_weight="0.30" />
 
+	
     <TextView
         android:id="@+id/name2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         />
+    
+    <Button
+	    android:id="@+id/toteam"
+	    android:layout_width="wrap_content"
+	    android:layout_height="0dp"
+	    android:text="Button" 
+	    android:visibility="gone"/>
+    
     
 </LinearLayout>

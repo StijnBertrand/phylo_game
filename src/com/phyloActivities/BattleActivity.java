@@ -72,7 +72,7 @@ public class BattleActivity extends Activity implements OnTouchListener{
 			battle = new Battle(null,new Phylomon(app.getDatabase()[0],5));
 			fullBallScanAllouwd = true;
 		}else{
-			battle = new Battle(app.getMyPhylomon()[0],new Phylomon(app.getDatabase()[0],5));
+			battle = new Battle(app.getTeam()[0],new Phylomon(app.getDatabase()[0],5));
 		}
 		
 		
@@ -253,7 +253,7 @@ public class BattleActivity extends Activity implements OnTouchListener{
 	    	if(resultCode == RESULT_OK){
 	    		int next = data.getIntExtra("next", -1);
 	    		if(next!= -1){
-	    			battle.change(app.getMyPhylomon()[next]);
+	    			battle.change(app.getTeam()[next]);
 	    			draw();
 	    			next();
 	    		}	
@@ -379,22 +379,28 @@ public class BattleActivity extends Activity implements OnTouchListener{
 	    		ndef.close();	    		
 				if(fullBallScanAllouwd){
 					try{
-						Phylomon next = NDEF.ndefToPhylomon(message);
-						//you can't choose a phylomon that has alredy fainted
-						if(!next.dead()){
-							NDEF.write(NDEF.getEmptyPhyloNdef(), tag);
-							battle.changeHome(next);
-							fullBallScanAllouwd = false;
-							hideMenu();
-							draw();
-							next();
+						//when the phylomon is not bound to this application, discard the scanned tag
+						//if(NDEF.getUUIDOfNdef(message).compareTo(app.getAppId()) == 0){	
+							Phylomon next = NDEF.ndefToPhylomon(message);
+							//you can't choose a phylomon that has alredy fainted
+							if(!next.dead()){
+								NDEF.write(NDEF.getEmptyPhyloNdef(), tag);
+								battle.changeHome(next);
+								fullBallScanAllouwd = false;
+								hideMenu();
+								draw();
+								next();
+							//}else{
+							//	this.message.setText("choose a phylomon that has not yet fainted");
+						//	}	
 						}else{
-							this.message.setText("choose a phylomon that has not yet fainted");
+							this.message.setText("You cannot use this Phylomon because he is not part of  your team.");
+							next();
 						}
 					}catch(Exception e){}
 				}else if(emptyBallScanAllouwd){
 					try{
-						NDEF.write(NDEF.phylomonToNdef(battle.getHome()), tag);
+						NDEF.write(NDEF.phylomonToNdef(battle.getHome(),app.getAppId()), tag);
 						battle.changeHome(null);
 						emptyBallScanAllouwd = false;
 						fullBallScanAllouwd = true;
@@ -425,7 +431,7 @@ public class BattleActivity extends Activity implements OnTouchListener{
 	private void enablePhylomonScan(){
 		//enable the handeling of a Phylomon 
 		IntentFilter[] filters = new IntentFilter[1]; 
-		filters[0] = NDEF.getPhylomonFilter();
+		filters[0] = NDEF.getUnboundPhylomonFilter();
 		adapter.enableForegroundDispatch(this,PendingIntent.getActivity(this, 0, getIntent(), 0),filters,null);
 	}
 	
@@ -433,7 +439,7 @@ public class BattleActivity extends Activity implements OnTouchListener{
 	@Override
 	protected void onNewIntent(Intent intent){	
 		super.onNewIntent(intent);
-		if(fullBallScanAllouwd && intent.getType().equals(NDEF.PHYLOMON_MIME)){
+		if(fullBallScanAllouwd && intent.getType().equals(NDEF.BOUND_PHYLOMON_MIME)){
 			tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 		}
 		if(emptyBallScanAllouwd && intent.getType().equals(NDEF.EMPTY_BALL_MIME)){

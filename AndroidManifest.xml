@@ -45,7 +45,7 @@
             <intent-filter>
   				<action android:name="android.nfc.action.NDEF_DISCOVERED"/>
  				<category android:name="android.intent.category.DEFAULT"/>
- 				<data android:mimeType="phylogame/empty ball" />
+ 				<data android:mimeType="phylogame/empty_ball" />
  			</intent-filter> 
         </activity>
         
@@ -61,9 +61,29 @@
             <intent-filter>
   				<action android:name="android.nfc.action.NDEF_DISCOVERED"/>
  				<category android:name="android.intent.category.DEFAULT"/>
- 				<data android:mimeType="phylogame/phylomon" />
+ 				<data android:mimeType="phylogame/unbound_phylomon" />
  			</intent-filter> 
-        </activity>        
+ 			
+ 			<intent-filter>
+  				<action android:name="android.nfc.action.NDEF_DISCOVERED"/>
+ 				<category android:name="android.intent.category.DEFAULT"/>
+ 				<data android:mimeType="phylogame/bound_phylomon" />
+ 			</intent-filter> 
+        </activity>     
+        
+        <activity
+            android:name="com.phyloActivities.PhyloCenter"
+            android:label="@string/Options" 
+            android:launchMode="singleTask"> 
+            
+            
+            <intent-filter>
+  				<action android:name="android.nfc.action.NDEF_DISCOVERED"/>
+ 				<category android:name="android.intent.category.DEFAULT"/>
+ 				<data android:mimeType="phylogame/phylo_center" />
+ 			</intent-filter>
+
+        </activity>
     </application>
 
 </manifest>

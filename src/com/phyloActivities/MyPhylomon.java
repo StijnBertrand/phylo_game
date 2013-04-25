@@ -42,7 +42,7 @@ public class MyPhylomon extends Activity implements OnItemClickListener{
 	private void initListView(){
 		listView = (ListView) findViewById(R.id.phylomonlist);
         //make an adapter for the ListView
-        MyAdapter adapter = new MyAdapter(this,	app.getMyPhylomon());
+        MyAdapter adapter = new MyAdapter(this,	app.getTeam());
         // Assign adapter to ListView
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(this);
@@ -92,13 +92,13 @@ public class MyPhylomon extends Activity implements OnItemClickListener{
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
 		Intent intent = getIntent();
-		Phylomon item = app.getMyPhylomon()[position];
+		Phylomon item = app.getTeam()[position];
 		if(item == null)return;
 		if(NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())){
         	try{
         		Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-        		NDEF.write(NDEF.phylomonToNdef(item), tag);
-        		app.getMyPhylomon()[position] = null;
+        		NDEF.write(NDEF.phylomonToNdef(item,null), tag);
+        		app.removeFromTeam(position);
         		initListView();
 			}catch (Exception e) {
 	    		finish();

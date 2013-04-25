@@ -1,0 +1,18 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/centerbackground"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/centertekst"
+        android:layout_width="141dp"
+        android:layout_height="56dp"
+        android:layout_marginBottom="325dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="600dp"
+        android:layout_marginTop="70dp"
+        android:text = "welcome to the phylocenter"
+        android:gravity="center" />
+
+</LinearLayout>
